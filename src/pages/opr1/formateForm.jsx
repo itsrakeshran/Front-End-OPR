@@ -36,11 +36,12 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useSelector, useDispatch } from 'react-redux';
-import { GetItems, GetOprDraft } from 'Redux/Apis/GetApiCalls';
+import { GetItems, GetOprDraft, GetVerticle } from 'Redux/Apis/GetApiCalls';
 
 const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
   const { items, error: itemsError, isFetching: itemsLoading } = useSelector((state) => state.itemMaster);
   const { oprDraftData, isFetching: oprDraftLoading, error: draftError } = useSelector((state) => state.opr);
+  const { verticles, isFetching: verticleLoading, error: verticleError } = useSelector((state) => state.verticle);
   const dispatch = useDispatch();
   const [showTableBodies, setShowTableBodies] = useState({
     createOPR: true,
@@ -359,44 +360,25 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
     setOprData(mappedData);
   }, [oprDraftData]);
 
+  useEffect(() => {
+    const formattedVerticalData = verticles.map((item) => ({
+      id: item.vertical_id,
+      name: item.vertical_name
+    }));
+    setVerticalData(formattedVerticalData);
+  }, [verticles]);
+
   const getOprDraftData = async (id) => {
     try {
       await GetOprDraft(dispatch, id);
-      // const response = await axios.get(`${BASE_URL}/opr/draft/${id}`);
-      // const mappedData = response.data.map((item, index) => ({
-      //   oprID: item.opr_id,
-      //   vertical: item.vertical_name,
-      //   division: item.division_creation,
-      //   buyingFrom: item.buy_from,
-      //   buyingHouse: item.buy_house,
-      //   company_name: item.company_name,
-      //   shipmentMode: item.shipment_mode,
-      //   deliveryTime: item.delivery_timeline,
-      //   department: item.department,
-      //   date: item.opr_date,
-      //   requestedBy: item.requested_by,
-      //   additionalRemarks: item.remarks,
-      //   opr_description: item.opr_description,
-      //   potentialSuppliers: item.suppliers,
-      //   quotationEmailAlert: item.no_quot_email_alert,
-      //   opr_num: item.opr_num,
-      //   quotationEmailAlert: item.no_quot_email_alert
-      // }));
-      // setOprData(mappedData);
       setOprId(id);
     } catch (error) {
       console.error('Error fetching OPR data:', error);
     }
   };
-
   const getVertical = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/vertical`);
-      const formattedVerticalData = response.data.map((item) => ({
-        id: item.vertical_id,
-        name: item.vertical_name
-      }));
-      setVerticalData(formattedVerticalData);
+      await GetVerticle(dispatch);
     } catch (error) {
       console.error('Error fetching vertical:', error);
       setErrors((prevErrors) => ({
@@ -404,7 +386,6 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
       }));
     }
   };
-
   const handleVerticalChange = async (event, setFieldValue) => {
     const selectedVerticalId = event.target.value;
     setFieldValue('vertical', selectedVerticalId);
@@ -543,7 +524,6 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
       await getHSNCode(itemId);
     }
   };
-
   const handleOPRSubmit = async (formValues, { resetForm }) => {
     try {
       const postData = {
@@ -609,7 +589,6 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
       console.error('Error updating OPR:', error);
     }
   };
-
   const handleSubmitStockItems = async (values, { resetForm }) => {
     console.log(itemList);
     try {
@@ -642,18 +621,15 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
       console.error('Error adding stock items:', error);
     }
   };
-
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setOpenSnackbar(false);
   };
-
   const handleConfirmItems = async () => {
     setOpenDialog(true);
   };
-
   const handleConfirmDialogClose = async (confirmed) => {
     setOpenDialog(false);
     if (confirmed) {
@@ -670,7 +646,6 @@ const FormateForm = ({ onSuccessfulSubmit, onEditClick }) => {
       }
     }
   };
-
   return (
     <>
       {/* ......................................OPR View  ........................... */}

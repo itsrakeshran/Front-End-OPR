@@ -4,6 +4,7 @@ import { usersFetchStart, usersFetchSuccess, usersFetchFailure } from '../Slices
 import { itemsFetchStart, itemsFetchSuccess, itemsFetchFailure } from '../Slices/ItemSlice';
 import { vendorsFetchStart, vendorsFetchSuccess, vendorsFetchFailure } from '../Slices/VendorSlice';
 import { getAllOprStart, getAllOprSuccess, getAllOprFailure } from '../Slices/OprSlice';
+import { verticleFetchStart, verticleFetchSuccess, verticleFetchFailure } from '../Slices/VerticalSlice';
 
 let token = localStorage.getItem('token');
 
@@ -96,4 +97,19 @@ export const GetOprDraft = async (dispatch, id) => {
     dispatch(getAllOprFailure(error?.response?.data?.success));
   }
 };
+
+export const GetVerticle = async (dispatch) => {
+  dispatch(verticleFetchStart());
+  try {
+    const { data } = await axiosInstance.get('/vertical', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    dispatch(verticleFetchSuccess({ data }));
+  } catch (error) {
+    dispatch(verticleFetchFailure(error?.response?.data?.success));
+  }
+};
+
 //Opr APis ends
