@@ -22,10 +22,25 @@ const itemMasterSlice = createSlice({
       state.isFetching = true;
       state.error = false;
       toast.error(`An Error has occurred at Items`);
+    },
+    itemCreateStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    itemCreateSuccess: (state, action) => {
+      toast.success(`Item sent Successfully`);
+      state.isFetching = false;
+      state.error = false;
+    },
+    itemCreateFailure: (state) => {
+      state.isFetching = true;
+      state.error = false;
+      toast.error(`An Error has occurred at Items`);
     }
   }
 });
 
-export const { itemsFetchStart, itemsFetchSuccess, itemsFetchFailure } = itemMasterSlice.actions;
+export const { itemsFetchStart, itemsFetchSuccess, itemsFetchFailure, itemCreateStart, itemCreateSuccess, itemCreateFailure } =
+  itemMasterSlice.actions;
 
 export default itemMasterSlice.reducer;

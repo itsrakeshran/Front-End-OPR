@@ -24,7 +24,7 @@ export const Login = async (dispatch, formdata) => {
 export const GetVendors = async (dispatch) => {
   dispatch(vendorsFetchStart());
   try {
-    const { data } = await axiosInstance.get('/vendor', {
+    const { data } = await axiosInstance.get('/api/vendor/vendors', {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -56,7 +56,7 @@ export const GetUsers = async (dispatch) => {
 export const GetItems = async (dispatch) => {
   dispatch(itemsFetchStart());
   try {
-    const { data } = await axiosInstance.get('/item', {
+    const { data } = await axiosInstance.get('/api/item/items', {
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -26,6 +26,9 @@ import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDown
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/system';
+import { CreateItem } from '../../../Redux/Apis/PostApiCalls';
+import { useDispatch, useSelector } from 'react-redux';
+import { values } from 'lodash';
 
 const VisuallyHiddenInput = styled('input')({
   display: 'none'
@@ -58,6 +61,10 @@ const initialFormValues = {
 };
 
 export default function ItemForm({ onClose, onFormSubmit, formMode }) {
+  const dispatch = useDispatch();
+
+  const { isFetching, error } = useSelector((state) => state.itemMaster);
+
   const [showTableHeading, setShowTableHeading] = useState({
     userPersonalDetail: true,
     userAddressDetails: true
@@ -250,37 +257,69 @@ export default function ItemForm({ onClose, onFormSubmit, formMode }) {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const mapFrontendToBackendKeys = (frontendData) => {
-      const formData = new FormData();
-      formData.append('item_name', frontendData.itemName);
-      formData.append('item_code', frontendData.itemCode);
-      formData.append('base_item', frontendData.baseItem);
-      formData.append('item_type', frontendData.itemType);
-      formData.append('item_description', frontendData.itemDescription);
-      formData.append('Unit_of_measurement_id', frontendData.unitOfMeasurement);
-      formData.append('cria', frontendData.cria);
-      formData.append('hs_code', frontendData.hsnCode);
-      formData.append('quantity_in_stock', '');
-      formData.append('quantity_on_order', '');
-      formData.append('nafdac_name', frontendData.nafdac);
-      formData.append('nafdac_category', frontendData.nafdacCategory);
-      formData.append('tolerance', frontendData.tolerance);
-      formData.append('reorder_level', frontendData.reorderLevel);
-      formData.append('unit_price', frontendData.unitPrice);
-      formData.append('msrp', frontendData.msrp);
-      formData.append('is_discontinued', frontendData.isDiscontinued);
-      formData.append('doc', frontendData.itemImageUrl); //
-      formData.append('notes', frontendData.notes);
-      formData.append('vendor_id', frontendData.venders);
-      formData.append('group', frontendData.group);
-      formData.append('sub_group', frontendData.subGroup);
-      formData.append('created_by', 'Item By');
+    // const mapFrontendToBackendKeys = (frontendData) => {
+    //   const formData = new FormData();
+    //   formData.append('item_name', frontendData.itemName);
+    //   formData.append('item_code', frontendData.itemCode);
+    //   formData.append('base_item', frontendData.baseItem);
+    //   formData.append('item_type', frontendData.itemType);
+    //   formData.append('item_description', frontendData.itemDescription);
+    //   formData.append('Unit_of_measurement_id', frontendData.unitOfMeasurement);
+    //   formData.append('cria', frontendData.cria);
+    //   formData.append('hs_code', frontendData.hsnCode);
+    //   formData.append('quantity_in_stock', '');
+    //   formData.append('quantity_on_order', '');
+    //   formData.append('nafdac_name', frontendData.nafdac);
+    //   formData.append('nafdac_category', frontendData.nafdacCategory);
+    //   formData.append('tolerance', frontendData.tolerance);
+    //   formData.append('reorder_level', frontendData.reorderLevel);
+    //   formData.append('unit_price', frontendData.unitPrice);
+    //   formData.append('msrp', frontendData.msrp);
+    //   formData.append('is_discontinued', frontendData.isDiscontinued);
+    //   formData.append('doc', frontendData.itemImageUrl); //
+    //   formData.append('notes', frontendData.notes);
+    //   formData.append('vendor_id', frontendData.venders);
+    //   formData.append('group', frontendData.group);
+    //   formData.append('sub_group', frontendData.subGroup);
+    //   formData.append('created_by', 'Item By');
 
-      return formData;
-    };
+    //   return formData;
+    // };
     // console.log('FORMDATA', formData);
-    const isValid = validate();
-    if (isValid) {
+    // const isValid = validate();
+
+    const mappedData = {
+      item_name: formValues.itemName,
+      item_code: formValues.itemCode,
+      base_item: formValues.baseItem,
+      factory: 'Factory',
+      item_type: formValues.itemType,
+      item_description: formValues.itemDescription,
+      hsn_code: formValues.hsnCode,
+      group_name: '1',
+      sub_group: '1',
+      cria: formValues.itemName,
+      nafdac_name: formValues.itemCode,
+      nafdac_category: formValues.baseItem,
+      tolerance: formValues.tolerance,
+      vendors: formValues.venders,
+      lead_time: `Lead Time`,
+      quantity_in_stock: formValues.quantityInStock,
+      quantity_on_order: formValues.quantityOnOrder,
+      reorder_level: formValues.reorderLevel,
+      unit_price: formValues.unitPrice,
+      msrp: "450",
+      is_discontinued: true,
+      item_img: 'img-1716885746871.jpg',
+      item_img_name: 'img-1716885746871.jpg',
+      notes: formValues.notes,
+      unit_of_measurement_id: '1',
+      status: '1',
+      created_by: 'undefined',
+      updated_by: 'Deepanshu Sharma'
+    };
+    if (true) {
+      await CreateItem(dispatch, mappedData);
       const requestData = mapFrontendToBackendKeys(formValues);
 
       try {

@@ -84,9 +84,9 @@ export default function AuthLogin({ forgot }) {
         // }}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await Login(dispatch, { username: values.email, password: values.password });
+            await Login(dispatch, { email: values.email, password: values.password });
             // await login(values.email, values.password);
-              navigate('/dashboard');
+            navigate('/dashboard');
             if (!error) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -187,11 +187,38 @@ export default function AuthLogin({ forgot }) {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
-                  </Button>
-                </AnimateButton>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <AnimateButton>
+                      <Button
+                        disableElevation
+                        disabled={isSubmitting}
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                      >
+                        Login
+                      </Button>
+                    </AnimateButton>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <AnimateButton>
+                      <Button
+                        onClick={() => navigate('/register')}
+                        disableElevation
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        variant="outlined"
+                        color="primary"
+                      >
+                        Signup
+                      </Button>
+                    </AnimateButton>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </form>

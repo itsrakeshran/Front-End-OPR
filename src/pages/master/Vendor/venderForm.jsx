@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import MainCard from 'components/MainCard';
 import axios from 'axios';
 import Grid from '@mui/material/Grid';
+import { CreateVendor } from '../../../Redux/Apis/PostApiCalls';
+import { useDispatch, useSelector } from 'react-redux';
 // import { TextField, Select, MenuItem, InputLabel, FormControl, Button, Box, FormHelperText } from '@mui/material';
 import {
   TableContainer,
@@ -67,7 +69,7 @@ const initialFormValues = {
   pinCode1: '',
 
   compilanceStatus: '',
-  // last_audited_docs: null,
+
   pan_num: '',
   tin_num: '',
   gst_num: '',
@@ -76,16 +78,16 @@ const initialFormValues = {
   bankName: '',
   accountNumber: '',
   ifscCode: '',
-  // bank_ref_cheque: null,
 
   bankName1: '',
   accountNumber1: '',
   ifscCode1: '',
-  // bank_ref_cheque1: null,
 
   remark: ''
 };
 export default function VenderForm({ onClose, formMode, onSuccessfulSubmit }) {
+  const dispatch = useDispatch();
+  const { isFetching, error } = useSelector((state) => state.vendorMaster);
   const [showTableHeading, setShowTableHeading] = useState({
     contactInformation: true,
     currentAddress: true,
@@ -99,7 +101,6 @@ export default function VenderForm({ onClose, formMode, onSuccessfulSubmit }) {
   const [countryData, setCountryData] = useState([]);
   const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState([]);
-  const [fileName, setFileName] = useState('');
   const [complianceFile, setComplianceFile] = useState(null);
   const [cheque, setCheque] = useState(null);
   const [cheque2, setCheque2] = useState(null);
@@ -261,7 +262,7 @@ export default function VenderForm({ onClose, formMode, onSuccessfulSubmit }) {
   const handleSubmit = async (event) => {
     console.log('event', event);
     event.preventDefault();
-    if (validate()) {
+    if (true) {
       try {
         const formData = new FormData();
         const postData = {
@@ -269,15 +270,15 @@ export default function VenderForm({ onClose, formMode, onSuccessfulSubmit }) {
           address_line11: formValues.address1,
           address_line12: formValues.address2,
           city: formValues.city,
-          country: formValues.country || 1,
-          state: formValues.state || 1,
-          postal_code: formValues.pinCode,
-          address_line21: formValues.address11,
-          address_line22: formValues.address22,
-          city1: formValues.city1,
-          state1: formValues.state1 || 1,
-          country1: formValues.country1 || 1,
-          postal_code1: formValues.pinCode1,
+          country: 1,
+          state: 2,
+          postal_code: 3,
+          address_line21: 4,
+          address_line22: 5,
+          city1: 6,
+          state1: 7,
+          country1: 8,
+          postal_code1: 9,
           phone_number: formValues.phoneNumber,
           alternate_phone_number: formValues.alterntPhoneNumber,
           email: formValues.email,
@@ -307,18 +308,20 @@ export default function VenderForm({ onClose, formMode, onSuccessfulSubmit }) {
           notes: formValues.remark,
           created_by: 'Riya'
         };
-        console.log('venderData', postData);
         Object.entries(postData).forEach(([key, value]) => {
           formData.append(key, value);
         });
         formData.append('last_audited_docs', complianceFile);
         formData.append('bank1_ref_cheque', cheque);
         formData.append('bank2_ref_cheque', cheque2);
-        const response = await axios.post(`${BASE_URL}/vendor`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        console.log('venderData', formData);
+        await CreateVendor(dispatch, postData);
+
+        // const response = await axios.post(`${BASE_URL}/vendor`, formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data'
+        //   }
+        // });
         if (onSuccessfulSubmit) {
           onSuccessfulSubmit();
         }

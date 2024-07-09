@@ -17,9 +17,10 @@ import FormHelperText from '@mui/material/FormHelperText';
 // third-party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
 
 // project-imports
-import useAuth from 'hooks/useAuth';
+import { Signup } from '../../../Redux/Apis/PostApiCalls';
 import useScriptRef from 'hooks/useScriptRef';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
@@ -33,10 +34,11 @@ import { Eye, EyeSlash } from 'iconsax-react';
 // ============================|| JWT - REGISTER ||============================ //
 
 export default function AuthRegister() {
-  const { register } = useAuth();
+  // const { register } = useAuth();
   const scriptedRef = useScriptRef();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const { isFetching, error } = useSelector((state) => state.auth);
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => {
@@ -63,7 +65,8 @@ export default function AuthRegister() {
           firstname: '',
           lastname: '',
           email: '',
-          company: '',
+          phone: '',
+          UserName: '',
           password: '',
           submit: null
         }}
@@ -71,11 +74,24 @@ export default function AuthRegister() {
           firstname: Yup.string().max(255).required('First Name is required'),
           lastname: Yup.string().max(255).required('Last Name is required'),
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          phone: Yup.number()
+            .typeError('Must be a valid Phone number')
+            .min(1000000, 'Phone number must be at least 7 digits')
+            .max(999999999999, 'Phone number cannot exceed 12 digits')
+            .required('Phone is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await register(values.email, values.password, values.firstname, values.lastname);
+            // await register(values.email, values.password, values.firstname, values.lastname);
+            await Signup(dispatch, {
+              first_name: values.firstname,
+              last_name: values.lastname,
+              email: values.email,
+              username: values.UserName,
+              phone_number: values.phone,
+              password: values.password
+            });
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -88,10 +104,6 @@ export default function AuthRegister() {
                   color: 'success'
                 }
               });
-
-              setTimeout(() => {
-                navigate('/login', { replace: true });
-              }, 1500);
             }
           } catch (err) {
             console.error(err);
@@ -151,22 +163,22 @@ export default function AuthRegister() {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="company-signup">Company</InputLabel>
+                  <InputLabel htmlFor="UserName-signup">UserName</InputLabel>
                   <OutlinedInput
                     fullWidth
-                    error={Boolean(touched.company && errors.company)}
-                    id="company-signup"
-                    value={values.company}
-                    name="company"
+                    error={Boolean(touched.UserName && errors.UserName)}
+                    id="UserName-signup"
+                    value={values.UserName}
+                    name="UserName"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Demo Inc."
+                    // placeholder="Demo Inc."
                     inputProps={{}}
                   />
                 </Stack>
-                {touched.company && errors.company && (
-                  <FormHelperText error id="helper-text-company-signup">
-                    {errors.company}
+                {touched.UserName && errors.UserName && (
+                  <FormHelperText error id="helper-text-UserName-signup">
+                    {errors.UserName}
                   </FormHelperText>
                 )}
               </Grid>
@@ -182,13 +194,35 @@ export default function AuthRegister() {
                     name="email"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="demo@company.com"
+                    placeholder="demo@UserName.com"
                     inputProps={{}}
                   />
                 </Stack>
                 {touched.email && errors.email && (
                   <FormHelperText error id="helper-text-email-signup">
                     {errors.email}
+                  </FormHelperText>
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                <Stack spacing={1}>
+                  <InputLabel htmlFor="email-signup">Phone Number*</InputLabel>
+                  <OutlinedInput
+                    fullWidth
+                    error={Boolean(touched.phone && errors.phone)}
+                    id="phone-login"
+                    type="phone"
+                    value={values.phone}
+                    name="phone"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    placeholder="+91 1234567890"
+                    inputProps={{}}
+                  />
+                </Stack>
+                {touched.phone && errors.phone && (
+                  <FormHelperText error id="helper-text-phone-signup">
+                    {errors.phone}
                   </FormHelperText>
                 )}
               </Grid>

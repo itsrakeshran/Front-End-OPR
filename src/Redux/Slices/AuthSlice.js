@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 const token = localStorage.getItem('token');
 const userInfoString = localStorage.getItem('userInfo');
 
-const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+const userInfo = userInfoString === null ? JSON.parse(userInfoString) : null;
 
 const authSlice = createSlice({
   name: 'auth',
@@ -16,7 +16,7 @@ const authSlice = createSlice({
     isLogged: Boolean(token)
   },
   reducers: {
-    loginStart: (state, action) => {
+    loginStart: (state) => {
       state.isFetching = true;
       state.error = false;
       state.isLogged = false;
@@ -39,8 +39,7 @@ const authSlice = createSlice({
       state.isLogged = false;
       toast.error(`An error has occurred!`);
     },
-
-    UpdateStart: (state, action) => {
+    UpdateStart: (state) => {
       state.isFetching = true;
       state.error = false;
     },
@@ -55,8 +54,21 @@ const authSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
-    logOut: (state, action) => {
-    
+    createUserStart: (state) => {
+      state.error = false;
+      state.isFetching = true;
+    },
+    createUserSuccess: (state) => {
+      toast.success(`Signed in Successfully!`);
+      state.error = false;
+      state.isFetching = false;
+    },
+    createUserFailure: (state) => {
+      state.error = true;
+      state.isFetching = false;
+    },
+    logOut: (state) => {
+      toast.error(`Sign-up failed!`);
       state.userInfo = null;
       state.token = null;
       localStorage.removeItem('userInfo');
@@ -65,5 +77,16 @@ const authSlice = createSlice({
   }
 });
 
-export const { logOut, loginStart, loginSuccess, loginFailure, UpdateStart, UpdateSuccess, UpdateFailure } = authSlice.actions;
+export const {
+  logOut,
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  createUserStart,
+  createUserSuccess,
+  createUserFailure,
+  UpdateStart,
+  UpdateSuccess,
+  UpdateFailure
+} = authSlice.actions;
 export default authSlice.reducer;
